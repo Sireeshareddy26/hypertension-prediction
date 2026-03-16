@@ -3,5 +3,5 @@ numpy
 scikit-learn
 streamlit
 pillow
-altair
+
 joblib
