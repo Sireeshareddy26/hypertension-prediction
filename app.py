@@ -9,13 +9,13 @@ with open('model.pkl', 'rb') as file:
 
 # Define the feature columns and their order used during training
 # This list was obtained from X.columns.tolist() in a previous step
-feature_columns = ['Age (years)', 'Weight (kg)', 'Height (cm)', 'BMI (kg/m²)', 'Serum Creatinine (mg/dL)', 
-                   'Serum Uric Acid (mg/dL)', 'Serum Potassium (mEq/L)', 'Serum Sodium (mEq/L)', 
-                   'Serum Albumin (g/dL)', 'Albumin/Creatinine Ratio', 'Total Cholesterol - TC (mg/dL)', 
-                   'LDL (mg/dL)', 'HDL (mg/dL)', 'Triglycerides - TG (mg/dL)', 'AIP [log(TG/HDL)]', 
-                   'CR1 (TC/HDL)', 'CR2 (LDL/HDL)', 'TG/HDL Ratio', 'AC [(TC-HDL)/HDL]', 'Gender_Male', 
-                   'BMI Category_Obese', 'BMI Category_Overweight', 'BMI Category_Underweight', 
-                   'AIP Category_Intermediate Risk', 'AIP Category_Low Risk', 'TG/HDL Category_Ideal', 
+feature_columns = ['Age (years)', 'Weight (kg)', 'Height (cm)', 'BMI (kg/m²)', 'Serum Creatinine (mg/dL)',
+                   'Serum Uric Acid (mg/dL)', 'Serum Potassium (mEq/L)', 'Serum Sodium (mEq/L)',
+                   'Serum Albumin (g/dL)', 'Albumin/Creatinine Ratio', 'Total Cholesterol - TC (mg/dL)',
+                   'LDL (mg/dL)', 'HDL (mg/dL)', 'Triglycerides - TG (mg/dL)', 'AIP [log(TG/HDL)]',
+                   'CR1 (TC/HDL)', 'CR2 (LDL/HDL)', 'TG/HDL Ratio', 'AC [(TC-HDL)/HDL]', 'Gender_Male',
+                   'BMI Category_Obese', 'BMI Category_Overweight', 'BMI Category_Underweight',
+                   'AIP Category_Intermediate Risk', 'AIP Category_Low Risk', 'TG/HDL Category_Ideal',
                    'TG/HDL Category_Moderate Risk']
 
 # 2. Set the title of the Streamlit application
@@ -55,52 +55,66 @@ with st.sidebar:
 
 # 4. Preprocess user inputs into a DataFrame matching model's training format
 def preprocess_input(input_data):
-    # Create a DataFrame with all feature columns initialized to 0 or appropriate default
-    processed_data = pd.DataFrame(0, index=[0], columns=feature_columns)
+    # Initialize a dictionary to store preprocessed data
+    processed_data_dict = {
+        'Age (years)': input_data['Age (years)'],
+        'Weight (kg)': input_data['Weight (kg)'],
+        'Height (cm)': input_data['Height (cm)'],
+        'BMI (kg/m²)': input_data['BMI (kg/m²)'],
+        'Serum Creatinine (mg/dL)': input_data['Serum Creatinine (mg/dL)'],
+        'Serum Uric Acid (mg/dL)': input_data['Serum Uric Acid (mg/dL)'],
+        'Serum Potassium (mEq/L)': input_data['Serum Potassium (mEq/L)'],
+        'Serum Sodium (mEq/L)': input_data['Serum Sodium (mEq/L)'],
+        'Serum Albumin (g/dL)': input_data['Serum Albumin (g/dL)'],
+        'Albumin/Creatinine Ratio': input_data['Albumin/Creatinine Ratio'],
+        'Total Cholesterol - TC (mg/dL)': input_data['Total Cholesterol - TC (mg/dL)'],
+        'LDL (mg/dL)': input_data['LDL (mg/dL)'],
+        'HDL (mg/dL)': input_data['HDL (mg/dL)'],
+        'Triglycerides - TG (mg/dL)': input_data['Triglycerides - TG (mg/dL)'],
+        'AIP [log(TG/HDL)]': input_data['AIP [log(TG/HDL)]'],
+        'CR1 (TC/HDL)': input_data['CR1 (TC/HDL)'],
+        'CR2 (LDL/HDL)': input_data['CR2 (LDL/HDL)'],
+        'TG/HDL Ratio': input_data['TG/HDL Ratio'],
+        'AC [(TC-HDL)/HDL]': input_data['AC [(TC-HDL)/HDL]'],
+        'Gender_Male': False, # Default to False (Female)
+        'BMI Category_Obese': False,
+        'BMI Category_Overweight': False,
+        'BMI Category_Underweight': False,
+        'AIP Category_Intermediate Risk': False,
+        'AIP Category_Low Risk': False,
+        'TG/HDL Category_Ideal': False,
+        'TG/HDL Category_Moderate Risk': False
+    }
 
-    # Populate numerical features
-    processed_data['Age (years)'] = input_data['Age (years)']
-    processed_data['Weight (kg)'] = input_data['Weight (kg)']
-    processed_data['Height (cm)'] = input_data['Height (cm)']
-    processed_data['BMI (kg/m²)'] = input_data['BMI (kg/m²)']
-    processed_data['Serum Creatinine (mg/dL)'] = input_data['Serum Creatinine (mg/dL)']
-    processed_data['Serum Uric Acid (mg/dL)'] = input_data['Serum Uric Acid (mg/dL)']
-    processed_data['Serum Potassium (mEq/L)'] = input_data['Serum Potassium (mEq/L)']
-    processed_data['Serum Sodium (mEq/L)'] = input_data['Serum Sodium (mEq/L)']
-    processed_data['Serum Albumin (g/dL)'] = input_data['Serum Albumin (g/dL)']
-    processed_data['Albumin/Creatinine Ratio'] = input_data['Albumin/Creatinine Ratio']
-    processed_data['Total Cholesterol - TC (mg/dL)'] = input_data['Total Cholesterol - TC (mg/dL)']
-    processed_data['LDL (mg/dL)'] = input_data['LDL (mg/dL)']
-    processed_data['HDL (mg/dL)'] = input_data['HDL (mg/dL)']
-    processed_data['Triglycerides - TG (mg/dL)'] = input_data['Triglycerides - TG (mg/dL)']
-    processed_data['AIP [log(TG/HDL)]'] = input_data['AIP [log(TG/HDL)]']
-    processed_data['CR1 (TC/HDL)'] = input_data['CR1 (TC/HDL)']
-    processed_data['CR2 (LDL/HDL)'] = input_data['CR2 (LDL/HDL)']
-    processed_data['TG/HDL Ratio'] = input_data['TG/HDL Ratio']
-    processed_data['AC [(TC-HDL)/HDL]'] = input_data['AC [(TC-HDL)/HDL]']
-
-    # Populate one-hot encoded categorical features
+    # Populate one-hot encoded categorical features with boolean values
     if input_data['Gender'] == 'Male':
-        processed_data['Gender_Male'] = 1
+        processed_data_dict['Gender_Male'] = True
 
     if input_data['BMI Category'] == 'Obese':
-        processed_data['BMI Category_Obese'] = 1
+        processed_data_dict['BMI Category_Obese'] = True
     elif input_data['BMI Category'] == 'Overweight':
-        processed_data['BMI Category_Overweight'] = 1
+        processed_data_dict['BMI Category_Overweight'] = True
     elif input_data['BMI Category'] == 'Underweight':
-        processed_data['BMI Category_Underweight'] = 1
+        processed_data_dict['BMI Category_Underweight'] = True
 
     if input_data['AIP Category'] == 'Intermediate Risk':
-        processed_data['AIP Category_Intermediate Risk'] = 1
+        processed_data_dict['AIP Category_Intermediate Risk'] = True
     elif input_data['AIP Category'] == 'Low Risk':
-        processed_data['AIP Category_Low Risk'] = 1
-        
+        processed_data_dict['AIP Category_Low Risk'] = True
+
     if input_data['TG/HDL Category'] == 'High Risk':
-        processed_data['TG/HDL Category_High Risk'] = 1
+        # Note: 'High Risk' is the default for TG/HDL when drop_first=True and others are False
+        # But if we explicitly set others, this would implicitly be handled.
+        # For safety and clarity, if 'High Risk' is selected, we need to ensure the other two are False
+        pass # 'High Risk' is the baseline when drop_first=True for TG/HDL Category
     elif input_data['TG/HDL Category'] == 'Ideal':
-        processed_data['TG/HDL Category_Ideal'] = 1
-        
-    return processed_data
+        processed_data_dict['TG/HDL Category_Ideal'] = True
+    elif input_data['TG/HDL Category'] == 'Moderate Risk':
+        processed_data_dict['TG/HDL Category_Moderate Risk'] = True
+
+    # Create a DataFrame from the dictionary, ensuring column order
+    processed_df = pd.DataFrame([processed_data_dict], columns=feature_columns)
+    return processed_df
 
 # Collect inputs into a dictionary
 input_data = {
@@ -133,7 +147,7 @@ input_data = {
 if st.button('Predict Hypertension'):
     # Preprocess the input data
     processed_input = preprocess_input(input_data)
-    
+
     # Make prediction
     prediction = model.predict(processed_input)
     prediction_proba = model.predict_proba(processed_input)[:, 1]
@@ -144,7 +158,7 @@ if st.button('Predict Hypertension'):
         st.error(f'The patient is predicted to have Hypertension with a probability of {prediction_proba[0]:.2f}.')
     else:
         st.success(f'The patient is predicted to have No Hypertension with a probability of {1-prediction_proba[0]:.2f}.')
-    
+
     st.write('---')
     st.write('### Input Data Summary:')
     st.write(pd.DataFrame([input_data]))
