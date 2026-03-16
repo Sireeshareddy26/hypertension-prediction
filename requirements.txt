@@ -1,6 +1,5 @@
 pandas
 numpy
 scikit-learn
-streamlit
-pillow
-altair
+streamlit==1.32.2
+
