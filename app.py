@@ -90,18 +90,12 @@ with col2:
 
 if st.button('Predict Hypertension'):
     # Convert categorical string inputs to numerical encoded values
-    processed_inputs = {}
-    for k, v in input_data.items():
-        if k in mapping_gender:
-            processed_inputs[k] = mapping_gender[v]
-        elif k in mapping_bmi_category:
-            processed_inputs[k] = mapping_bmi_category[v]
-        elif k in mapping_aip_category:
-            processed_inputs[k] = mapping_aip_category[v]
-        elif k in mapping_tghdl_category:
-            processed_inputs[k] = mapping_tghdl_category[v]
-        else:
-            processed_inputs[k] = v
+    processed_inputs = input_data.copy()
+
+    processed_inputs['Gender'] = mapping_gender[input_data['Gender']]
+    processed_inputs['BMI Category'] = mapping_bmi_category[input_data['BMI Category']]
+    processed_inputs['AIP Category'] = mapping_aip_category[input_data['AIP Category']]
+    processed_inputs['TG/HDL Category'] = mapping_tghdl_category[input_data['TG/HDL Category']]
 
     # Calculate derived lipid indices
     derived_indices = calculate_derived_lipid_indices(
